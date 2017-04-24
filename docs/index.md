@@ -46,7 +46,6 @@ Bundles encapsulate all of the configuration in `IntentionTagger` object and `Ac
    This component may be used for logging/auditing the runs, update the event history, and perform post-execution tasks. 
  
 Usage example:  
-
 ```C++
 Bundle bundle = make_mbundle(
                   std::cout,
@@ -68,7 +67,6 @@ All future invocations under label will use this registered bundle.
 Often the call to unreliable service is already realized as a callable: free function, functor, a method of a class.  
 In such case, it is more convenient to rely on `BRunner` utility class.  
 We initialize the BRunner with a label and instrument the run be calling `run` and `run_m` methods for functions and methods respectively.
-
 ```C++
 int call(string key); //free function; wraps a call to the service
 
@@ -92,19 +90,18 @@ TNullable<float> r2 = br.run_m(a, A::call, 1, 2);
 
 //runs F functor
 TNullable<void> r3 = br.run(F());
-
 ```
+
 #### BRunner construction with user owned structures
 When BRunner is constructed with a single label, it reaches for the global registry  
 in order to obtain the bundle and event trace associated with the label.  
 An alternative constructor allows to bypass the global registry completely and run using local structures:  
-
 ```C++
     Circuit circuit;
     Bundle bundle;
     LinuxSysTimer timer;
     BRunner br(circuit, bundle, &timer);
- ```
+```
   
 
 #### Nesting
@@ -134,20 +131,21 @@ AcceptUpdates is given the status of the execution, even if the decision in the 
    
 #### Circuit Predicates
 We provide various simple circuit breakers triggering after observing K events of certain type in last M entries of a history.
+
 * BreakAfterKTimeoutsInM  
 * BreakAfterKExceptionsInM  
 * BreakAfterKPercentsTimeoutsInM  
 * BreakAfterKPercentsExceptionsInM  
   
 Similarly, we introduce components for issuing probing calls and repairing a broken circuit:  
+
 * ProbeAfterK  
 * RepairAfterKSuccessInM  
 * RepairAfterKPercentsSuccessInM  
 
 More sophisticated predicates may be introduced by inheriting from `TracePredicateCloneable`.  
 A single IntentionTagger will typically hold multiple circuit predicates.  
- 
- ```C++
+```C++
  IntentionTagger intentionTagger;
 
  intentionTagger.cloneIn(
@@ -165,7 +163,7 @@ A single IntentionTagger will typically hold multiple circuit predicates.
  intentionTagger.cloneIn(
      IntentionTagger::SHOULD_MEND,
      Circuitry::RepairAfterKSuccessInM(3));
- ```
+```
 
 #### Acceptors
 The acceptor is called after successful execution or catching an exception thrown inside the called code.  
