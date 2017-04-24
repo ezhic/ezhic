@@ -1,0 +1,7 @@
+LocalCmake.in
+.*
+*.orig
+tests/tests
+Makefile
+tests/Makefile
+tests/googletest

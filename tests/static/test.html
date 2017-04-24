@@ -1,0 +1,260 @@
+<!--suppress ALL -->
+<html>
+<head>
+<script src="js/jquery-3.2.0.min.js"></script>
+<script src="js/main.js"></script>
+<link rel="stylesheet" href="css/reveal.css">
+<style type="text/css">
+div {  text-align: left; }
+</style>
+</head>
+
+<body onload="init(); reveal();">
+<div class="reveal">
+    <div class="slides">
+        <section  data-transition="none">
+            <div style="text-align: left;">
+            <h1 style="font-size: 80px; font-weight: bold">Easy High Constancy</h1>
+            <h2 style="font-size: 60px; padding-top: 10px">Circuit breaking for fault tolerance</h2>
+            </div>
+            <div style="font-size: 40px; text-align: right; padding-top: 250px">
+            <img src="dcl.png" width="128px"/>
+            Dallas Clement
+            <img src="sn.png" width="128px"/><u>Sergey Nepomnyachiy</u>
+            </div>
+        </section>
+        <section data-transition="none">
+            <div style="text-align: left; font-size: 50px;">
+                <br/>
+                <h2><i>&ldquo;Man is mortal.<br/>The worst of it &mdash; he's unexpectedly mortal.&rdquo;</i></h2>
+                <br/>
+            </div>
+            <div style="font-size: 40px; text-align: right">
+                M. A. Bulgakov
+            </div>
+
+        </section>
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Motivation</h1>
+            <p style="padding-top: 40px">
+            <br/>
+                <span style="font-size: 40px">We all make calls to:</span>
+            <span>
+                <ul>
+                <li style="padding-top: 20px; font-size: 40px">Algorithms</li>
+                <li style="padding-top: 20px; font-size: 40px">Databases</li>
+                <li style="padding-top: 20px; font-size: 40px">Remote services</li>
+                </ul>
+            </span>
+            </p>
+        </div></section>
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Motivation</h1>
+            <p style="padding-top: 40px">
+            <br/>
+                <span style="font-size: 40px">We all make calls to:</span>
+            <span>
+                <ul>
+                <li style="padding-top: 20px; font-size: 40px">Algorithms <i>with awful worst case running time</i></li>
+                <li style="padding-top: 20px; font-size: 40px">Databases</li>
+                <li style="padding-top: 20px; font-size: 40px">Remote services</li>
+                </ul>
+            </span>
+        </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Motivation</h1>
+            <p style="padding-top: 40px">
+                <br/>
+                <span style="font-size: 40px">We all make calls to:</span>
+                <span>
+                <ul>
+                <li style="padding-top: 20px; font-size: 40px">Algorithms <i>with awful worst case running time</i></li>
+                <li style="padding-top: 20px; font-size: 40px">Databases <i>on a failing hardware</i></li>
+                <li style="padding-top: 20px; font-size: 40px">Remote services</li>
+                </ul>
+            </span>
+            </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Motivation</h1>
+            <p style="padding-top: 40px">
+                <br/>
+                <span style="font-size: 40px">We all make calls to:</span>
+                <span>
+                <ul>
+                <li style="padding-top: 20px; font-size: 40px">Algorithms <i>with awful worst case running time</i></li>
+                <li style="padding-top: 20px; font-size: 40px">Databases <i>on a failing hardware</i></li>
+                <li style="padding-top: 20px; font-size: 40px">Remote services <i>across unreliable networks</i></li>
+                </ul>
+            </span>
+            </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Motivation</h1>
+            <p style="padding-top: 40px">
+                <br/>
+                <span style="font-size: 40px"> Consequently, the above may result in various faults:</span>
+            <span>
+            <ul>
+                <li style="padding: 20px; font-size: 40px">Timeouts</li>
+                <li style="padding: 20px; font-size: 40px">Exceptions</li>
+                <li style="padding: 20px; font-size: 40px">Invalid values</li>
+            </ul>
+            </span>
+            </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Goals</h1>
+            <p style="padding-top: 40px">
+                <br/>
+                <span style="font-size: 40px">We need a library for instrumenting the calls,<br/>such that the faults are:</span>
+                <span>
+            <ul>
+                <li style="padding: 20px; font-size: 40px">Acknowledged and recorded</li>
+                <li style="padding: 20px; font-size: 40px">Alleviated by validation and normalization</li>
+                <li style="padding: 20px; font-size: 40px">Avoided by "circuit breaking" &mdash;<br/>skipping the invocation entirely</li>
+            </ul>
+                </span>
+            </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Prior art</h1>
+            <p style="padding-top: 40px">
+                <br/>
+                <img src="hystrix.png"/>
+                <span>
+            <ul>
+                <li style="padding: 20px; font-size: 40px">Netflix Hystrix for Java</li>
+                <li style="padding: 20px; font-size: 40px">Pycopine &mdash; Python port</li>
+            </ul></span>
+            </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Our Contribution</h1>
+            <br/>
+            <img src="ezhic.png" width="300"/>
+            <p style="padding-top: 40px; font-size: 40px">&nbsp;
+                <b  style="font-weight: bold">E</b>a<b style="font-weight: bold">z</b>y
+                <b  style="font-weight: bold">Hi</b>gh
+                <b  style="font-weight: bold">C</b>onstancy
+            <br/>
+                <span>
+            <ul>
+                <li style="padding: 20px; font-size: 40px">C++ library with no dependencies</li>
+                <li style="padding: 20px; font-size: 40px">C++03 compliant</li>
+            <li style="padding: 20px; font-size: 40px">Open source, MIT license</li>
+            </ul></span>
+                <br/><br/>
+            <a style="font-size: 40px" href="github.com/ezhic/ezhic">github.com/ezhic/ezhic</a>
+            </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Usage example</h1>
+            <p style="padding-top: 40px">
+                <br/>
+                <span style="font-size: 40px">Existing call:</span>
+            <pre style="font-size: 40px">
+
+            remote.call(arg1, arg2);
+            </pre>
+            </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Usage example</h1>
+            <p style="padding-top: 40px">
+                <br/>
+                <span style="font-size: 40px">Instrumented call with a label:</span><br/>
+            <pre style="font-size: 40px">
+
+            <span style="font-weight: bold">EZ_START</span>(<span style="color: blue">"label-for-remote1"</span>);
+
+            remote.call(arg1, arg2);
+
+            <span style="font-weight: bold">EZ_END</span>();
+            </pre>
+            </p>
+        </div></section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Usage example</h1>
+            <p style="padding-top: 40px">
+                <br/>
+                <span style="font-size: 40px">Associating config. bundle with a label:</span><br/>
+            <pre style="font-size: 40px">
+
+            Bundle bundle;
+            ezreg::writeBundle(<span style="color: blue">"label-for-remote1"</span>, bundle);
+
+            ...
+
+            BRunner runner(<span style="color: blue">"label-for-remote1"</span>);
+            runner.run_m(remote, &Remote::call, arg1, arg2);
+            </pre>
+            </p>
+        </div></section>
+
+        <section data-transition="none">
+            <span>
+
+            <input type="image" onclick='toggleTimer(this);' src="play.png">&nbsp;&nbsp;
+            <input type="image" onclick='useConfig("Uneventful");' src="uneventful.png">&nbsp;&nbsp;
+            <input type="image" onclick='useConfig("Service failures");' src="timeouts.png">&nbsp;&nbsp;
+            <input type="image" onclick='useConfig("With circuit breaker");' src="breaking.png">&nbsp;&nbsp;
+            <input type="image" onclick='$("#param-form").show();' src="settings.png">
+            </span>
+            <div id="param-form">
+                <h3>Service parameters</h3>
+                <h4>Time step: <input type="text" id="timestep" value="15"></h4>
+                <h4>Time count: <input type="text" id="timecount" value="20"></h4>
+                <h4>stickFor: <input type="text" id="stickFor" value="12"></h4>
+
+                <h3>Ezhic parameters</h3>
+                <h4>Timeout: <input type="text" id="timeout" value="195"></h4>
+                <h4>kTimeouts: <input type="text" id="kTimeouts" value="3">
+                    mTimeouts: <input type="text" id="mTimeouts" value="4"></h4>
+                <h4>kExceptions: <input type="text" id="kExceptions" value="2">
+                    mExceptions: <input type="text" id="mExceptions" value="4"></h4>
+                <h4>kProbe: <input type="text" id="kProbe" value="8"></h4>
+                <h4>kMend: <input type="text" id="kMend" value="3"></h4>
+
+
+
+                <button onclick="injectParams();">Submit</button>
+            </div>
+            <p id="typetitle"></p>
+            <canvas id="canvas" width="1000" height="650"></canvas>
+            <p><br/>
+                <span>Legend:
+                    <font color="#2c7bb6">SUCCESS</font>
+                    <font color="#d7191c">TIMEOUT</font>
+                    <font color="magenta">CIRCUIT BREAK/MEND</font>
+                    <font color="#2f4f4f">SKIP</font>
+
+                </span>
+            </p>
+        </section>
+
+        <section data-transition="none"><div>
+            <h1 style="font-size: 60px; font-weight: bold">Future work</h1>
+            <br/>
+            <span>
+            <ul>
+                <li style="padding: 20px; font-size: 40px">C++11 extension</li>
+                <li style="padding: 20px; font-size: 40px">Asynchronous scheduler</li>
+            </ul></span>
+        </div></section>
+
+    </div>
+</div>
+<script src="js/reveal.js"></script>
+</body>
+</html>

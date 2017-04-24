@@ -1,0 +1,17 @@
+BasedOnStyle: LLVM
+AllowAllParametersOfDeclarationOnNextLine:      false
+ConstructorInitializerIndentWidth:              0
+IndentWidth:                                    4
+AlwaysBreakTemplateDeclarations:                true
+AllowShortFunctionsOnASingleLine:               Inline
+KeepEmptyLinesAtTheStartOfBlocks:               false
+SpacesBeforeTrailingComments:                   2
+BreakBeforeBraces:                              Mozilla
+BinPackArguments:                               false
+Standard:                                       Cpp03
+ColumnLimit:                                    79
+TabWidth:                                       4
+BreakConstructorInitializersBeforeComma:        true
+BinPackParameters:                              false
+AllowShortIfStatementsOnASingleLine:            false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
