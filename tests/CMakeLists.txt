@@ -3,6 +3,8 @@ project(ezhic)
 
 add_subdirectory(googletest)
 include_directories(../lib-src)
+include_directories(../lib-src/Circuitry)
+
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 set(SOURCE_FILES
