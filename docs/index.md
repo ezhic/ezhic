@@ -1,4 +1,4 @@
-###Motivation
+### Motivation
 Your perfect code frequently calls unreliable agents: 
 databases, remote services, and highly inefficient algorithms.   
 The calls can timeout, throw exceptions, return invalid results.   
@@ -11,8 +11,8 @@ We introduce a mechanism for easily instrumenting the existing calls in your app
 The added logic is recording the execution history for the different calls and provides tunable 
 "circuit breakers" to cancel calls to misbehaving agents.  
 
-###Usage
-####Simple use: macros
+### Usage
+#### Simple use: macros
 
 Consider a code fetching data from remote server:
 ```C++
@@ -33,7 +33,7 @@ Executions with the same label also share history, and hence will be managed as 
 The label is also bound to a particular configuration of the system.  
 If no configuration was set for a given label, it will use the system defaults. 
 
-####Advanced use: configuring bundles
+#### Advanced use: configuring bundles
 Each label is associated with a single configuration manifest named *Bundle*.   
 The default bundle is used for labels that were not assigned with any other bundle.   
 Any configuration, including the default one, may be replaced at any point.   
@@ -64,7 +64,7 @@ for circuit breaking and mending when timeouts or exceptions occur.
 Finally, we use `writeBundle` to associate the bundle with our label.   
 All future invocations under label will use this registered bundle. 
 
-####Using callables with BRunner
+#### Using callables with BRunner
 Often the call to unreliable service is already realized as a callable: free function, functor, a method of a class.  
 In such case, it is more convenient to rely on `BRunner` utility class.  
 We initialize the BRunner with a label and instrument the run be calling `run` and `run_m` methods for functions and methods respectively.
@@ -94,7 +94,7 @@ TNullable<float> r2 = br.run_m(a, A::call, 1, 2);
 TNullable<void> r3 = br.run(F());
 
 ```
-####BRunner construction with user owned structures
+#### BRunner construction with user owned structures
 When BRunner is constructed with a single label, it reaches for the global registry  
 in order to obtain the bundle and event trace associated with the label.  
 An alternative constructor allows to bypass the global registry completely and run using local structures:  
@@ -107,7 +107,7 @@ An alternative constructor allows to bypass the global registry completely and r
  ```
   
 
-####Nesting
+#### Nesting
 It is possible to nest runs (explicitly and implicitly), both made via EZ_ macros and BRunner.  
 However, if inner and outer executions share a label the event trace may become quite confusing.  
 To avoid such clashes your library code should use unique labels and possibly not rely on the global registry at all.   
@@ -119,20 +119,20 @@ To avoid such clashes your library code should use unique labels and possibly no
 * **Circuit predicates**: use an execution history to perform circuit operations: breaking, fixing, probing. 
 * **Update acceptors**: receive a Task object, summarizing the execution for a label. 
 
-####Registry
+#### Registry
 A registry allows setting and retrieving:  
 a) A timer &mdash; a system timer or a dummy timer for adding timestamps to events and measuring running duration.  
 b) Bundles &mdash; a bundle per label.  
 c) Circuits &mdash; a circuit per label, contains the event history for that label.
 
-####Bundle
+#### Bundle
 Composed of: `IntentionTagger`, `AcceptUpdates`, and `isRethrow` flag.   
 IntentionTagger is used prior to execution and applies circuit predicates to decide if the run should proceed.  
 The decision may be *ROUTINE* execution, *PROBE* run, or *NO_RUN* at all.  
 When the *isRethrow* flag is set to true, directs the runner to isRethrow any exceptions it catches.  
 AcceptUpdates is given the status of the execution, even if the decision in the previous stage was *NO_RUN* or an exception was thrown.
    
-####Circuit Predicates
+#### Circuit Predicates
 We provide various simple circuit breakers triggering after observing K events of certain type in last M entries of a history.
 * BreakAfterKTimeoutsInM  
 * BreakAfterKExceptionsInM  
@@ -167,14 +167,14 @@ A single IntentionTagger will typically hold multiple circuit predicates.
      Circuitry::RepairAfterKSuccessInM(3));
  ```
 
-####Acceptors
+#### Acceptors
 The acceptor is called after successful execution or catching an exception thrown inside the called code.  
 The role of the acceptor is to analyze the execution metadata and return a single Event object to be stored in the event trace for the label.  
 However, since multiple parties may be interested in that data, the one acceptor is often a facade to many different "subscribers".   
 For instance, we may want to log the execution, check if timed out, validate or sanitize the result.   
 We provide a utility class `AcceptorsArray` that will fanout the update to multiple acceptors and return the result of last invocation. 
  
-####Post run call
+#### Post run call
 Sometimes we want to apply specific logic to the result of the execution, rather than its metadata.  
 To allow this, we expose a virtual `postRun` method which we call after the call to acceptors and just before returning the result.  
 This mechanism is available only to runs executed via BRunner::run and BRunner::run_m.  
@@ -186,7 +186,7 @@ In both we inherit from BRunner and override postRun to execute our logic.
 Result caching or normalization could be implemented in a similar way.   
 
     
-####Shortcomings
+#### Shortcomings
 * Overhead &mdash; the instrumentation of the call is not particularly costly,  
 but it does involve a couple of lookups for strings in maps, copying objects by value, heap allocations, etc.  
 We assume that the instrumented runs are not trivial tasks and usually take some time to complete,  
