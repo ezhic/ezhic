@@ -18,3 +18,4 @@ A divergent version using C++11 features is under [ezhic_2](https://github.com/e
 
 
 [Documentation](docs/index.md)
+[ACCU talk](https://youtu.be/0KuKuW-HzzE)
