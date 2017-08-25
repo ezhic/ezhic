@@ -17,5 +17,5 @@ The library is C++03 friendly.
 A divergent version using C++11 features is under [ezhic_2](https://github.com/ezhic/ezhic_2)
 
 
-[Documentation](docs/index.md)
+[Documentation](docs/index.md)  
 [ACCU talk](https://youtu.be/0KuKuW-HzzE)
